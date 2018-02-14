@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.daniel.hcs.interfaces.RequestListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +37,8 @@ public class API {
 
     public void login(final String name, final String password, final RequestListener requestListener) {
         volleyRequestQueue = VolleyRequestQueue.getInstance(activity);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity);
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(AppConstants.KEY_NAME, name);
@@ -52,7 +55,7 @@ public class API {
             public void onResponse(JSONObject response) {
                 try {
                     String jwt = response.getString(AppConstants.KEY_JWT);
-
+                    Log.e("LOG RESPONSE", String.valueOf(response));
                     if (jwt != null) {
                         SharedPreferences sharedPreferences = activity.getSharedPreferences(AppConstants.SHARED_PREFERENCES_NAME,
                                 Context.MODE_PRIVATE);
@@ -61,6 +64,33 @@ public class API {
                         editor.putString(AppConstants.KEY_NAME, name);
                         editor.putString(AppConstants.KEY_PASSWORD, password);
                         editor.commit();
+                        Log.e("JWT token:", jwt);
+                        JSONArray pills = response.getJSONArray(AppConstants.KEY_PILLS);
+                        Integer pillsLength = pills.length();
+                        if (pillsLength != 0) {
+                            for (int i = 0; i < pillsLength; ++i) {
+                                JSONObject pillObject = (JSONObject) pills.get(i);
+                                databaseHelper.addPill(new Pill(
+                                        pillObject.getLong(AppConstants.KEY_SERVER_ID),
+                                        pillObject.getString(AppConstants.KEY_NAME),
+                                        pillObject.getString(AppConstants.KEY_DESCRIPTION),
+                                        pillObject.getLong(AppConstants.KEY_NUMBER_OF_INTAKES)
+                                ));
+
+                                JSONArray intakes = pillObject.getJSONArray(AppConstants.KEY_INTAKES);
+                                Integer intakesLength = intakes.length();
+                                if (intakesLength != 0) {
+                                    for (int j = 0; j < intakesLength; ++j) {
+                                        JSONObject intakeObject = (JSONObject) intakes.get(j);
+                                        databaseHelper.addIntake(new Intake(
+                                                intakeObject.getLong(AppConstants.KEY_SERVER_ID),
+                                                pillObject.getLong(AppConstants.KEY_SERVER_ID),
+                                                intakeObject.getString(AppConstants.KEY_TIME_OF_INTAKE)
+                                        ));
+                                    }
+                                }
+                            }
+                        }
                         requestListener.finished("success");
                     } else {
                         requestListener.failed("Login4 failed");
@@ -95,6 +125,7 @@ public class API {
                 AppConstants.API_BASE_URL + AppConstants.ENDPOINT_REGISTER, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.e("REG RESPONSE", String.valueOf(response));
                 try {
                     Integer status = response.getInt(AppConstants.KEY_STATUS);
                     if (status == 0) {

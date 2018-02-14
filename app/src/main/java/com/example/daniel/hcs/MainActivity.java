@@ -1,6 +1,7 @@
 package com.example.daniel.hcs;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         bLogin = findViewById(R.id.bLogin);
         bRegister = findViewById(R.id.bRegister);
-        etName = findViewById(R.id.etName);
+        etName = findViewById(R.id.etFullName);
         etPassword = findViewById(R.id.etPassword);
 
         bLogin.setOnClickListener(this);
@@ -51,6 +52,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void finished(String message) {
                         Log.e("FINITO", "LADIDA");
+                        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                        startActivity(intent);
+                        MainActivity.this.finish();
                     }
                 });
                 break;

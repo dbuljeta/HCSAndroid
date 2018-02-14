@@ -7,8 +7,7 @@ package com.example.daniel.hcs.utils;
 public class AppConstants {
 
     public static final String SHARED_PREFERENCES_NAME = "hca";
-    public static final String API_TAG = "hcsS";
-    public static final String API_BASE_URL = "http://todoos.azurewebsites.net/api/";
+    public static final String API_BASE_URL = "https://hcs.herokuapp.com/api/";
 
     /**
      * API KEYS
@@ -19,6 +18,7 @@ public class AppConstants {
 
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_NAME = "name";
+    public static final String KEY_PILLS = "pills";
 
 
     /**
@@ -28,4 +28,9 @@ public class AppConstants {
     public static final String ENDPOINT_REGISTER = "register";
     public static final String ENDPOINT_PILL = "pills";
 
+    public static final String KEY_SERVER_ID = "id";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_NUMBER_OF_INTAKES = "numberOfIntakes";
+    public static final String KEY_INTAKES = "intakes";
+    public static final String KEY_TIME_OF_INTAKE = "timeOfIntake";
 }
