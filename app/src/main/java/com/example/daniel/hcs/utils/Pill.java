@@ -26,11 +26,7 @@ public class Pill {
         this.description = description;
         this.numberOfIntakes = numberOfIntakes;
     }
-    public Pill(String name, String description, Long numberOfIntakes) {
-        this.name = name;
-        this.description = description;
-        this.numberOfIntakes = numberOfIntakes;
-    }
+
     //timeofintakes, taken/nottaken
     public Long getId() {
         return id;

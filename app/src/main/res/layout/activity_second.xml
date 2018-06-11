@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#727167"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#727167"
     android:orientation="vertical"
     tools:context="com.example.daniel.hcs.SecondActivity">
 
     <TextView
         android:id="@+id/tvFirstPill"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content" />
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lvAllPills">
 
-    </ListView>
+    <ListView
+        android:id="@+id/lvAllPills"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
+        android:id="@+id/bAddPill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bAddPill"
-        android:text="AddPill"
         android:layout_alignParentBottom="true"
-        />
+        android:text="AddPill" />
 
 </RelativeLayout>

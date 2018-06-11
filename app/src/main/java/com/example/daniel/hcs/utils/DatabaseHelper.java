@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private static final String TABLE_PILLS = "pills";
     private static final String TABLE_INTAKES = "intakes";
+    private static final String TABLE_EVENT_INTAKE = "table_intake";
 
     /**
      * Column names
@@ -35,6 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_NUMBER_OF_INTAKES = "numberOfIntakes";
     private static final String KEY_TIME_OF_INTAKE = "timeOfIntake";
     private static final String KEY_PILL_ID = "pillId";
+    private static final String KEY_INTAKE_ID = "intakeId";
+    private static final String KEY_TAKEN = "taken";
 
     private static DatabaseHelper databaseHelper;
 
@@ -65,23 +69,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_PILL_ID + " INTEGER," +
             KEY_TIME_OF_INTAKE + " TEXT)";
 
+    private static final String CREATE_TABLE_EVENT_INTAKE = "CREATE TABLE " + TABLE_EVENT_INTAKE + " (" +
+            KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_SERVER_ID + " INTEGER," +
+            KEY_INTAKE_ID + " INTEGER," +
+            KEY_PILL_ID + " INTEGER," +
+            KEY_TAKEN + " INTEGER)";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_PILLS);
         db.execSQL(CREATE_TABLE_INTAKES);
+        db.execSQL(CREATE_TABLE_EVENT_INTAKE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PILLS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INTAKES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENT_INTAKE);
         onCreate(db);
     }
 
     public List<Pill> getAllPills() {
         List<Pill> pillList = new ArrayList<Pill>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_PILLS;
+        String selectQuery = "SELECT * FROM " + TABLE_PILLS;
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
@@ -94,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Long.valueOf(cursor.getString(1)),
                         cursor.getString(2),
                         cursor.getString(3),
-                        Long.valueOf(cursor.getString(1))
+                        Long.valueOf(cursor.getString(4))
                 ));
             } while (cursor.moveToNext());
         }
@@ -102,6 +115,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.close();
 
         return pillList;
+    }
+
+    public void deleteAllPills() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PILLS, null, null);
+        db.close();
     }
 
     public List<Intake> getIntakesFromPill(Pill pill) {
@@ -132,17 +151,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return intakeList;
     }
 
-    public void addPill(Pill pill) {
+    public Long addPill(Pill pill) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        Long id;
 
         ContentValues values = new ContentValues();
         values.put(KEY_SERVER_ID, pill.getServerId());
         values.put(KEY_NAME, pill.getName());
-        values.put(KEY_DESCRIPTION, pill.getNumberOfIntakes());
+        values.put(KEY_DESCRIPTION, pill.getDescription());
         values.put(KEY_NUMBER_OF_INTAKES, pill.getNumberOfIntakes());
 
-        sqLiteDatabase.insert(TABLE_PILLS, null, values);
+        Log.e("Pill", "Ubacio sam u bazu");
+        Log.e("Pill", String.valueOf(values));
+
+        id = sqLiteDatabase.insert(TABLE_PILLS, KEY_SERVER_ID, values);
         sqLiteDatabase.close();
+        return id;
     }
 
     public void addIntake(Intake intake) {
@@ -153,7 +177,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TIME_OF_INTAKE, intake.getTimeOfIntake());
         values.put(KEY_PILL_ID, intake.getPillId());
 
-        sqLiteDatabase.insert(TABLE_INTAKES, null, values);
+        sqLiteDatabase.insert(TABLE_INTAKES, KEY_SERVER_ID, values);
+        sqLiteDatabase.close();
+    }
+
+    public void addIntakeEvent(IntakeEvent event) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_SERVER_ID, event.getServerId());
+        values.put(KEY_INTAKE_ID, event.getIntakeId());
+        values.put(KEY_PILL_ID, event.getPillId());
+        values.put(KEY_TAKEN, event.getTaken());
+
+        Log.e("EVENT", "CREATING");
+
+        sqLiteDatabase.insert(TABLE_EVENT_INTAKE, KEY_SERVER_ID, values);
         sqLiteDatabase.close();
     }
 

@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvPill"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="pillName"
-        android:id="@+id/tvPill"/>
+        android:text="pillName" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvTimeIntake"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TimeOfIntake"
-        android:id="@+id/tvTimeIntake"/>
+        android:text="TimeOfIntake" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tvNumberOfIntakes"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="numberOfIntakes"
-        android:id="@+id/tvNumberOfIntakes"/>
+        android:text="numberOfIntakes" />
 
 </LinearLayout>
