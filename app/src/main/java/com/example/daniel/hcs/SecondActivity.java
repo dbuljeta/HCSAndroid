@@ -58,6 +58,7 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         bAddPill = findViewById(R.id.bAddPill);
         bAddPill.setOnClickListener(this);
         listView.setOnItemLongClickListener(this);
+        checkTime();
     }
 
     @Override
@@ -128,14 +129,14 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
     private void checkTime(){
         int i, j, alarmNumber = 0;
         String time;
-        String[] currentTime;
+//        String[] currentTime;
         String[] intakeTime;
 
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String test = sdf.format(cal.getTime());
-        Log.e("TEST", test);
-        currentTime = test.split(":");
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//        String test = sdf.format(cal.getTime());
+//        Log.e("TEST", test);
+//        currentTime = test.split(":");
 //        Log.e("timeHH", currentTime[0]);
 //        Log.e("timeMM", currentTime[1]);
 
@@ -173,6 +174,7 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
                 alarmCalendarTime.set(Calendar.HOUR_OF_DAY, hour);
                 alarmCalendarTime.set(Calendar.MINUTE, minute);
                 alarmCalendarTime.set(Calendar.SECOND, 0); //Must be set to 0 to start the alarm right when the minute hits 30
+                alarmCalendarTime.set(Calendar.MILLISECOND, 0); //Must be set to 0 to start the alarm right when the minute hits 30
 
                 //Add a day if alarm is set for before current time, so the alarm is triggered the next day
                 if (alarmCalendarTime.before(Calendar.getInstance())) {
