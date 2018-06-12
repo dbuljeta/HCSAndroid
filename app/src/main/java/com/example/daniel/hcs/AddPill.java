@@ -19,7 +19,7 @@ import com.example.daniel.hcs.utils.Pill;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPill extends Activity implements View.OnClickListener, DialogInterface.OnClickListener {
+public class AddPill extends Activity implements View.OnClickListener {
     EditText etName, etDescription, etNumberOfConsuption;
     //    TimePicker tpTimeOfIntake;
     Button bAdd;
@@ -62,38 +62,15 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
 
 //            pillId = databaseHelper.addPill(pill);
 
-            final TimePicker timePicker = new TimePicker(this);
-            timePicker.setIs24HourView(true);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Add intake " + (numberOfDialogs + 1))
-                    .setMessage("Set time of intake!")
-                    .setView(timePicker)
-                    .setPositiveButton("Create", this)
-                    .show();
-
+            createTimePickerDialog();
         }
     }
 
-    @Override
-    public void onClick(DialogInterface dialogInterface, int i) {
-        numberOfDialogs++;
+    private void createTimePickerDialog() {
         final TimePicker timePicker = new TimePicker(this);
         timePicker.setIs24HourView(true);
-        Integer hour = timePicker.getHour();
-        Integer min = timePicker.getMinute();
-        Log.e("HOURS", String.valueOf(hour));
-        Log.e("min", String.valueOf(min));
-        intakeList.add(new Intake(
-                hour + ":" + min + ":00"
-        ));
-//        databaseHelper.addIntake(new Intake(
-//                1L,
-//                pillId,
-//                hour + ":" + min + ":00"
-//        ));
 
         if(numberOfDialogs == number - 1) {
-            Log.e("ADD", "SEND");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Add intake " + (numberOfDialogs + 1))
                     .setMessage("Set time of intake!")
@@ -105,12 +82,7 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
                             Integer min = timePicker.getMinute();
                             Log.e("HOURS", String.valueOf(hour));
                             Log.e("min", String.valueOf(min));
-//                            databaseHelper.addIntake(new Intake(
-//                                    1L,
-//                                    pillId,
-//                                    hour + ":" + min + ":00"
-//                            ));
-                            if (min > 10)
+                            if (min >= 10)
                             {
                                 intakeList.add(new Intake(
                                         String.valueOf(hour) + ":" + String.valueOf(min) + ":00"
@@ -144,38 +116,31 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
             builder.setTitle("Add intake " + (numberOfDialogs + 1))
                     .setMessage("Set time of intake!")
                     .setView(timePicker)
-                    .setPositiveButton("Create", this)
+                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Integer hour = timePicker.getHour();
+                            Integer min = timePicker.getMinute();
+
+                            if (min >= 10)
+                            {
+                                intakeList.add(new Intake(
+                                        String.valueOf(hour) + ":" + String.valueOf(min) + ":00"
+                                ));
+                            }
+                            else {
+                                intakeList.add(new Intake(
+                                        String.valueOf(hour) + ":0" + String.valueOf(min) + ":00"
+                                ));
+                            }
+
+                            if (number != 1) {
+                                createTimePickerDialog();
+                            }
+                        }
+                    })
                     .show();
         }
-    }
-
-    private void createTimePickerDialog() {
-        final TimePicker timePicker = new TimePicker(this);
-        timePicker.setIs24HourView(true);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add intake " + (numberOfDialogs + 1))
-                .setMessage("Set time of intake!")
-                .setView(timePicker)
-                .setPositiveButton("Create", this)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, int which) {
-                        Integer hour = timePicker.getHour();
-                        Integer min = timePicker.getMinute();
-                        Log.e("HOURS", String.valueOf(hour));
-                        Log.e("min", String.valueOf(min));
-                        intakeList.add(new Intake(
-                                hour + ":" + min + ":00"
-                        ));
-//                        databaseHelper.addIntake(new Intake(
-//                                1L,
-//                                pillId,
-//                                hour + ":" + min + ":00"
-//                        ));
-                    }
-
-
-                }).show();
+        numberOfDialogs++;
     }
 }

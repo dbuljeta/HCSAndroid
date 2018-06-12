@@ -190,6 +190,7 @@ public class API {
                         for (Intake intake: intakesList) {
                             intake.setPillId(pillServerId);
                             Log.e("PILLSERVERID", String.valueOf(intake.getPillId()));
+                            Log.e("HOUT", String.valueOf(intake.getTimeOfIntake()));
                             databaseHelper.addIntake(intake);
                         }
                         requestListener.finished("success");
