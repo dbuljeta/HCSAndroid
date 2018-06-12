@@ -19,6 +19,8 @@ public class AppConstants {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_NAME = "name";
     public static final String KEY_PILLS = "pills";
+    public static final String KEY_TIME_OF_INTAKE = "timeOfIntake";
+    public static final String KEY_INTAKES = "intakes";
 
 
     /**
@@ -26,11 +28,9 @@ public class AppConstants {
      */
     public static final String ENDPOINT_LOGIN = "login";
     public static final String ENDPOINT_REGISTER = "register";
-    public static final String ENDPOINT_PILL = "pills";
+    public static final String ENDPOINT_PILL = "pill";
 
     public static final String KEY_SERVER_ID = "id";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_NUMBER_OF_INTAKES = "numberOfIntakes";
-    public static final String KEY_INTAKES = "intakes";
-    public static final String KEY_TIME_OF_INTAKE = "timeOfIntake";
 }

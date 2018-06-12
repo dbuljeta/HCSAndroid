@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by Daniel on 2/14/2018.
  */
@@ -143,6 +145,70 @@ public class API {
                 requestListener.failed("Server error please try again");
             }
         });
+
+        volleyRequestQueue.addToRequestQueue(jsonObjectRequest);
+    }
+
+    public void createPill(final Pill pill, final List<Intake> intakesList, final RequestListener requestListener) {
+        volleyRequestQueue = VolleyRequestQueue.getInstance(activity);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity);
+        JSONObject jsonObject = new JSONObject();
+        Log.e("CREATEPILL", "ENTER");
+        try {
+            Log.e("CREATEPILL", "ENTER");
+            JSONArray intakes = new JSONArray();
+            for (Intake intake : intakesList) {
+                JSONObject jsonIntake = new JSONObject();
+                jsonIntake.put(AppConstants.KEY_TIME_OF_INTAKE, intake.getTimeOfIntake());
+                intakes.put(jsonIntake);
+            }
+
+            jsonObject.put(AppConstants.KEY_NAME, pill.getName());
+            jsonObject.put(AppConstants.KEY_DESCRIPTION, pill.getDescription());
+            jsonObject.put(AppConstants.KEY_INTAKES, intakes);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("CREATEPILL", "ENTER");
+        }
+        Log.e("JSON REQEST", String.valueOf(jsonObject));
+        CustomJSONAuthObject jsonObjectRequest = new CustomJSONAuthObject(Request.Method.POST,
+                AppConstants.API_BASE_URL + AppConstants.ENDPOINT_PILL, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("CREATEPILL", "ENTER");
+                Log.e("REG RESPONSE", String.valueOf(response));
+                try {
+                    Integer status = response.getInt(AppConstants.KEY_STATUS);
+                    if (status == 0) {
+                        requestListener.failed("Email is taken");
+                    } else {
+                        Long pillServerId = response.getLong(AppConstants.KEY_SERVER_ID);
+                        pill.setServerId(pillServerId);
+
+                        databaseHelper.addPill(pill);
+                        for (Intake intake: intakesList) {
+                            intake.setPillId(pillServerId);
+                            Log.e("PILLSERVERID", String.valueOf(intake.getPillId()));
+                            databaseHelper.addIntake(intake);
+                        }
+                        requestListener.finished("success");
+
+                    }
+                } catch (Exception e) {
+                    Log.e("REG exp", String.valueOf(e.getMessage()));
+
+                    requestListener.failed(e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("REG RESPONSE", String.valueOf(error));
+
+                requestListener.failed("Server error please try again");
+            }
+        }, activity);
 
         volleyRequestQueue.addToRequestQueue(jsonObjectRequest);
     }

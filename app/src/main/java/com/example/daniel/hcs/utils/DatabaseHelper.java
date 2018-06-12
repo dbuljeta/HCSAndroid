@@ -65,7 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_INTAKES = "CREATE TABLE " + TABLE_INTAKES + " (" +
             KEY_ID + " INTEGER PRIMARY KEY," +
-            KEY_SERVER_ID + " INTEGER," +
             KEY_PILL_ID + " INTEGER," +
             KEY_TIME_OF_INTAKE + " TEXT)";
 
@@ -139,7 +138,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 intakeList.add(new Intake(
                         Long.valueOf(cursor.getString(0)),
-                        Long.valueOf(cursor.getString(1)),
                         Long.valueOf(cursor.getString(2)),
                         cursor.getString(3)
                 ));
@@ -150,6 +148,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return intakeList;
     }
+
+//    public List<Intake> getIntakes(Pill pill) {
+//        List<Intake> intakeList = new ArrayList<Intake>();
+//        // Select All Query
+//        String selectQuery = "SELECT  * FROM " + TABLE_INTAKES +
+//                " INNER JOIN " + TABLE_PILLS +
+//                " ON " + TABLE_PILLS + "." + KEY_ID + "=" + TABLE_INTAKES + "." + KEY_PILL_ID +
+//                " WHERE " + TABLE_PILLS + "." + KEY_ID + "=" + pill.getServerId();
+//
+//        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+//        Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
+//
+//        // looping through all rows and adding to list
+//        if (cursor.moveToFirst()) {
+//            do {
+//                intakeList.add(new Intake(
+//                        Long.valueOf(cursor.getString(0)),
+//                        Long.valueOf(cursor.getString(1)),
+//                        Long.valueOf(cursor.getString(2)),
+//                        cursor.getString(3)
+//                ));
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        sqLiteDatabase.close();
+//
+//        return intakeList;
+//    }
 
     public Long addPill(Pill pill) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -173,7 +199,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_SERVER_ID, intake.getServerId());
         values.put(KEY_TIME_OF_INTAKE, intake.getTimeOfIntake());
         values.put(KEY_PILL_ID, intake.getPillId());
 

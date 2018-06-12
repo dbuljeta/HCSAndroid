@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.example.daniel.hcs.interfaces.RequestListener;
+import com.example.daniel.hcs.utils.API;
 import com.example.daniel.hcs.utils.DatabaseHelper;
 import com.example.daniel.hcs.utils.Intake;
 import com.example.daniel.hcs.utils.Pill;
@@ -24,6 +26,10 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
     DatabaseHelper databaseHelper;
     Integer numberOfDialogs = 0;
     Long number, pillId;
+    Pill pill;
+    List<Intake> intakeList = new ArrayList<Intake>();
+    private API apiService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,7 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
         etNumberOfConsuption = findViewById(R.id.etNumberOfConsuption);
         bAdd = findViewById(R.id.bAdd);
         bAdd.setOnClickListener(this);
+        apiService = API.getInstance(this);
         databaseHelper = DatabaseHelper.getInstance(this);
     }
 
@@ -47,12 +54,13 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
         number = Long.parseLong(String.valueOf(etNumberOfConsuption.getText()));
         if (!name.isEmpty() || !description.isEmpty() || number != 0) {
             //TODO make server request
-            Pill pill = new Pill(1L, name, description, number);
+            pill = new Pill(name, description, number);
             Log.e("Pill", String.valueOf(pill.getServerId()));
             Log.e("Pill", String.valueOf(pill.getName()));
             Log.e("Pill", String.valueOf(pill.getDescription()));
             Log.e("Pill", String.valueOf(pill.getNumberOfIntakes()));
-            pillId = databaseHelper.addPill(pill);
+
+//            pillId = databaseHelper.addPill(pill);
 
             final TimePicker timePicker = new TimePicker(this);
             timePicker.setIs24HourView(true);
@@ -75,13 +83,17 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
         Integer min = timePicker.getMinute();
         Log.e("HOURS", String.valueOf(hour));
         Log.e("min", String.valueOf(min));
-        databaseHelper.addIntake(new Intake(
-                1L,
-                pillId,
-                hour + ":" + min
+        intakeList.add(new Intake(
+                hour + ":" + min + ":00"
         ));
+//        databaseHelper.addIntake(new Intake(
+//                1L,
+//                pillId,
+//                hour + ":" + min + ":00"
+//        ));
 
         if(numberOfDialogs == number - 1) {
+            Log.e("ADD", "SEND");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Add intake " + (numberOfDialogs + 1))
                     .setMessage("Set time of intake!")
@@ -93,12 +105,36 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
                             Integer min = timePicker.getMinute();
                             Log.e("HOURS", String.valueOf(hour));
                             Log.e("min", String.valueOf(min));
-                            databaseHelper.addIntake(new Intake(
-                                    1L,
-                                    pillId,
-                                    hour + ":" + min
-                            ));
-                            AddPill.this.finish();
+//                            databaseHelper.addIntake(new Intake(
+//                                    1L,
+//                                    pillId,
+//                                    hour + ":" + min + ":00"
+//                            ));
+                            if (min > 10)
+                            {
+                                intakeList.add(new Intake(
+                                        String.valueOf(hour) + ":" + String.valueOf(min) + ":00"
+                                ));
+                            }
+                            else {
+                                intakeList.add(new Intake(
+                                        String.valueOf(hour) + ":0" + String.valueOf(min) + ":00"
+                                ));
+                            }
+
+
+                            apiService.createPill(pill, intakeList, new RequestListener() {
+                                @Override
+                                public void failed(String message) {
+                                    Log.e("ADD", "FAIL");
+                                }
+
+                                @Override
+                                public void finished(String message) {
+                                    Log.e("ADD", "SUCC");
+                                    AddPill.this.finish();
+                                }
+                            });
                         }
                     })
                     .show();
@@ -129,11 +165,14 @@ public class AddPill extends Activity implements View.OnClickListener, DialogInt
                         Integer min = timePicker.getMinute();
                         Log.e("HOURS", String.valueOf(hour));
                         Log.e("min", String.valueOf(min));
-                        databaseHelper.addIntake(new Intake(
-                                1L,
-                                pillId,
-                                hour + ":" + min
+                        intakeList.add(new Intake(
+                                hour + ":" + min + ":00"
                         ));
+//                        databaseHelper.addIntake(new Intake(
+//                                1L,
+//                                pillId,
+//                                hour + ":" + min + ":00"
+//                        ));
                     }
 
 

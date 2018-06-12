@@ -12,6 +12,12 @@ public class Pill {
     private String description;
     private Long numberOfIntakes;
 
+    public Pill(String name, String description, Long numberOfIntakes) {
+        this.name = name;
+        this.description = description;
+        this.numberOfIntakes = numberOfIntakes;
+    }
+
     public Pill(Long id, Long serverId, String name, String description, Long numberOfIntakes) {
         this.id = id;
         this.serverId = serverId;

@@ -3,6 +3,7 @@ package com.example.daniel.hcs;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +12,14 @@ import android.widget.Toast;
 
 import com.example.daniel.hcs.interfaces.RequestListener;
 import com.example.daniel.hcs.utils.API;
+import com.example.daniel.hcs.utils.DatabaseHelper;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button bLogin, bRegister;
     private EditText etName, etPassword;
     private API apiService;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         bRegister.setOnClickListener(this);
 
         apiService = API.getInstance(this);
+        databaseHelper = DatabaseHelper.getInstance(this);
+        databaseHelper.deleteAllPills();
     }
 
     @Override

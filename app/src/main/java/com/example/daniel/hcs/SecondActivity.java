@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.daniel.hcs.utils.CustomAdapter;
 import com.example.daniel.hcs.utils.DatabaseHelper;
+import com.example.daniel.hcs.utils.Intake;
 import com.example.daniel.hcs.utils.Pill;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
 //        Log.e("Pill", String.valueOf(pillList.get(i).getNumberOfIntakes()));
 //        Log.e("Pill", "\n");
         pillAdapter.insert(pillList);
+        checkTime();
         super.onRestart();
     }
 
@@ -81,5 +83,42 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         databaseHelper.deletePill(pillList.remove(i));
         pillAdapter.insert(pillList);
         return false;
+    }
+
+//    private void managerTasks(Location mlocation) {
+//        float distance;
+//        for (int i = 0; i < locations.size(); i++) {
+//            Location locationTaskMarker = new Location("");
+//            locationTaskMarker.setLatitude(locations.get(i).latitude);
+//            locationTaskMarker.setLongitude(locations.get(i).longitude);
+//            distance = locationTaskMarker.distanceTo(mlocation);
+//            Log.e("distance", Float.toString(distance));
+//            if (distance < 50) {
+//                if (!fCalled) {
+////                    fCalled = true;
+////                    taskBuilder(i);
+//                }
+//            }
+//        }
+//    }
+
+    private void checkTime(){
+        int i, j;
+        String time;
+        List<Pill> pills = databaseHelper.getAllPills();
+        List<Intake> intakes = null;
+        Log.e("time",String.valueOf(pills.size()));
+        for (i = 0; i < pills.size(); i++)
+        {
+            Log.e("time",String.valueOf(i));
+            intakes = databaseHelper.getIntakesFromPill(pills.get(i));
+            for (j = 0; j < intakes.size(); j++)
+            {
+                time = intakes.get(j).getTimeOfIntake();
+                Log.e("time", "Vrijeme " + j + " " + time);
+            }
+        }
+
+
     }
 }
