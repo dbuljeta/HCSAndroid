@@ -14,13 +14,13 @@ public class Intake {
         this.timeOfIntake = timeOfIntake;
     }
 
-    public Intake(Long id, Long serverId, Long pillId, String timeOfIntake) {
+    public Intake(Long id, Long pillId, String timeOfIntake) {
         this.id = id;
         this.pillId = pillId;
         this.timeOfIntake = timeOfIntake;
     }
 
-    public Intake(Long serverId, Long pillId, String timeOfIntake) {
+    public Intake(Long pillId, String timeOfIntake) {
         this.pillId = pillId;
         this.timeOfIntake = timeOfIntake;
     }

@@ -85,7 +85,6 @@ public class API {
                                     for (int j = 0; j < intakesLength; ++j) {
                                         JSONObject intakeObject = (JSONObject) intakes.get(j);
                                         databaseHelper.addIntake(new Intake(
-                                                intakeObject.getLong(AppConstants.KEY_SERVER_ID),
                                                 pillObject.getLong(AppConstants.KEY_SERVER_ID),
                                                 intakeObject.getString(AppConstants.KEY_TIME_OF_INTAKE)
                                         ));

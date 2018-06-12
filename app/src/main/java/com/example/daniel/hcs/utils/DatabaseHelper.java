@@ -123,23 +123,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Intake> getIntakesFromPill(Pill pill) {
-        List<Intake> intakeList = new ArrayList<Intake>();
+        List<Intake> intakeList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_INTAKES +
-                " INNER JOIN " + TABLE_PILLS +
-                " ON " + TABLE_PILLS + "." + KEY_ID + "=" + TABLE_INTAKES + "." + KEY_PILL_ID +
-                " WHERE " + TABLE_PILLS + "." + KEY_ID + "=" + pill.getServerId();
-
+                " WHERE " + TABLE_INTAKES + "." + KEY_PILL_ID + "=" + pill.getServerId();
+        Log.e("Server ID", "serverID " + pill.getServerId());
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
+                Log.e("F", cursor.getString(0));
+                Log.e("F", cursor.getString(1));
+                Log.e("F", cursor.getString(2));
                 intakeList.add(new Intake(
                         Long.valueOf(cursor.getString(0)),
-                        Long.valueOf(cursor.getString(2)),
-                        cursor.getString(3)
+                        Long.valueOf(cursor.getString(1)),
+                        cursor.getString(2)
                 ));
             } while (cursor.moveToNext());
         }
@@ -199,10 +200,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        Log.e("INTAK C", String.valueOf(intake.getPillId()));
         values.put(KEY_TIME_OF_INTAKE, intake.getTimeOfIntake());
         values.put(KEY_PILL_ID, intake.getPillId());
 
-        sqLiteDatabase.insert(TABLE_INTAKES, KEY_SERVER_ID, values);
+        sqLiteDatabase.insert(TABLE_INTAKES, null, values);
         sqLiteDatabase.close();
     }
 
@@ -217,7 +219,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.e("EVENT", "CREATING");
 
-        sqLiteDatabase.insert(TABLE_EVENT_INTAKE, KEY_SERVER_ID, values);
+        sqLiteDatabase.insert(TABLE_EVENT_INTAKE, KEY_PILL_ID, values);
         sqLiteDatabase.close();
     }
 

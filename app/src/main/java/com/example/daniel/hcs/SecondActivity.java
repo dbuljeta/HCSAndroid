@@ -1,8 +1,12 @@
 package com.example.daniel.hcs;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,9 +20,14 @@ import com.example.daniel.hcs.utils.CustomAdapter;
 import com.example.daniel.hcs.utils.DatabaseHelper;
 import com.example.daniel.hcs.utils.Intake;
 import com.example.daniel.hcs.utils.Pill;
+import com.example.daniel.hcs.utils.WakeupReceiver;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SecondActivity extends Activity implements View.OnClickListener, AdapterView.OnItemLongClickListener {
 
@@ -117,19 +126,61 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
 //    }
 
     private void checkTime(){
-        int i, j;
+        int i, j, alarmNumber = 0;
         String time;
+        String[] currentTime;
+        String[] intakeTime;
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String test = sdf.format(cal.getTime());
+        Log.e("TEST", test);
+        currentTime = test.split(":");
+//        Log.e("timeHH", currentTime[0]);
+//        Log.e("timeMM", currentTime[1]);
+
         List<Pill> pills = databaseHelper.getAllPills();
-        List<Intake> intakes = null;
-        Log.e("time",String.valueOf(pills.size()));
+        List<Intake> intakes;
+//        Log.e("time","PILL SIZE " + String.valueOf(pills.size()));
+
         for (i = 0; i < pills.size(); i++)
         {
-            Log.e("time",String.valueOf(i));
+            Log.e("time", "i " + String.valueOf(i));
             intakes = databaseHelper.getIntakesFromPill(pills.get(i));
-            for (j = 0; j < intakes.size(); j++)
-            {
+//            Log.e("PIll ID", "pill ID " + pills.get(i).getServerId());
+//            Log.e("time", "INTAKE SIZE " + String.valueOf(intakes.size()));
+            for (j = 0; j < intakes.size(); j++) {
                 time = intakes.get(j).getTimeOfIntake();
-                Log.e("time", "Vrijeme " + j + " " + time);
+                intakeTime = time.split(":");
+//                Log.e("timeHH", intakeTime[0]);
+//                Log.e("timeMM", intakeTime[1]);
+//                if (currentTime[0].equals(intakeTime[0]) && currentTime[1].equals(intakeTime[1]))
+//                {
+//                    Log.e("time", "Uzmi tableticu u: Vrijeme " + j + " " + time);
+//
+//                }
+                AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+                Intent receiverIntent = new Intent(this, WakeupReceiver.class);
+                //The second parameter is unique to this PendingIntent,
+                //if you want to make more alarms,
+                //make sure to change the 0 to another integer
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(this, alarmNumber, receiverIntent, 0);
+
+                int hour = Integer.parseInt(intakeTime[0]);
+                int minute = Integer.parseInt(intakeTime[1]);
+
+                Calendar alarmCalendarTime = Calendar.getInstance(); //Convert to a Calendar instance to be able to get the time in milliseconds to trigger the alarm
+                alarmCalendarTime.set(Calendar.HOUR_OF_DAY, hour);
+                alarmCalendarTime.set(Calendar.MINUTE, minute);
+                alarmCalendarTime.set(Calendar.SECOND, 0); //Must be set to 0 to start the alarm right when the minute hits 30
+
+                //Add a day if alarm is set for before current time, so the alarm is triggered the next day
+                if (alarmCalendarTime.before(Calendar.getInstance())) {
+                    alarmCalendarTime.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarmCalendarTime.getTimeInMillis(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS), alarmIntent);
+                alarmNumber++;
             }
         }
 

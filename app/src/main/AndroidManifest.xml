@@ -3,6 +3,7 @@
     package="com.example.daniel.hcs">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".utils.WakeupReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +27,7 @@
         </activity>
         <activity android:name=".SecondActivity" />
         <activity android:name=".AddPill" />
+        <activity android:name=".NotificationActivity"></activity>
     </application>
 
 </manifest>
