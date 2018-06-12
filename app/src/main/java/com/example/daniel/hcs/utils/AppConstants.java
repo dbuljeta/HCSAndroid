@@ -29,6 +29,7 @@ public class AppConstants {
     public static final String ENDPOINT_LOGIN = "login";
     public static final String ENDPOINT_REGISTER = "register";
     public static final String ENDPOINT_PILL = "pill";
+    public static final String ENDPOINT_PILL_DELETE = "pill-delete";
 
     public static final String KEY_SERVER_ID = "id";
     public static final String KEY_DESCRIPTION = "description";

@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.daniel.hcs.interfaces.RequestListener;
+import com.example.daniel.hcs.utils.API;
 import com.example.daniel.hcs.utils.CustomAdapter;
 import com.example.daniel.hcs.utils.DatabaseHelper;
 import com.example.daniel.hcs.utils.Intake;
@@ -25,6 +27,7 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
     private Button bAddPill;
     private List<Pill> pillList;
     private CustomAdapter pillAdapter;
+    private API api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         pillList = databaseHelper.getAllPills();
         pillAdapter = new CustomAdapter(pillList);
         this.listView.setAdapter(pillAdapter);
+        api = API.getInstance(this);
 
         //List<Pill> pills = databaseHelper.getAllPills();
         //Log.e("Mein pills", String.valueOf(pills));
@@ -79,9 +83,19 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        databaseHelper.deletePill(pillList.remove(i));
-        pillAdapter.insert(pillList);
+    public boolean onItemLongClick(final AdapterView<?> adapterView, View view, int i, long l) {
+        api.deletePill(pillList.remove(i), new RequestListener() {
+            @Override
+            public void failed(String message) {
+                Log.e("Failed", "FAIL");
+            }
+
+            @Override
+            public void finished(String message) {
+                pillAdapter.notifyDataSetChanged();
+            }
+        });
+
         return false;
     }
 

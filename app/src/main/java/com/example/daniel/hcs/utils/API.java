@@ -213,5 +213,50 @@ public class API {
         volleyRequestQueue.addToRequestQueue(jsonObjectRequest);
     }
 
+    public void deletePill(final Pill pill, final RequestListener requestListener) {
+        volleyRequestQueue = VolleyRequestQueue.getInstance(activity);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity);
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(AppConstants.KEY_SERVER_ID, pill.getServerId());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("JSON REQEST", String.valueOf(jsonObject));
+        CustomJSONAuthObject jsonObjectRequest = new CustomJSONAuthObject(Request.Method.POST,
+                AppConstants.API_BASE_URL + AppConstants.ENDPOINT_PILL_DELETE, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("CREATEPILL", "ENTER");
+                Log.e("REG RESPONSE", String.valueOf(response));
+                try {
+                    Integer status = response.getInt(AppConstants.KEY_STATUS);
+                    if (status == 0) {
+                        requestListener.failed("Email is taken");
+                    } else {
+                        databaseHelper.deletePill(pill);
+                        requestListener.finished("success");
+
+                    }
+                } catch (Exception e) {
+                    Log.e("REG exp", String.valueOf(e.getMessage()));
+
+                    requestListener.failed(e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("REG RESPONSE", String.valueOf(error));
+
+                requestListener.failed("Server error please try again");
+            }
+        }, activity);
+
+        volleyRequestQueue.addToRequestQueue(jsonObjectRequest);
+    }
+
 }
 
