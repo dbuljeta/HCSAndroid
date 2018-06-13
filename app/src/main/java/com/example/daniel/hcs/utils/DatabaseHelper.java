@@ -65,14 +65,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_INTAKES = "CREATE TABLE " + TABLE_INTAKES + " (" +
             KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_SERVER_ID + " INTEGER," +
             KEY_PILL_ID + " INTEGER," +
             KEY_TIME_OF_INTAKE + " TEXT)";
 
     private static final String CREATE_TABLE_EVENT_INTAKE = "CREATE TABLE " + TABLE_EVENT_INTAKE + " (" +
             KEY_ID + " INTEGER PRIMARY KEY," +
-            KEY_SERVER_ID + " INTEGER," +
-            KEY_INTAKE_ID + " INTEGER," +
             KEY_PILL_ID + " INTEGER," +
+            KEY_INTAKE_ID + " INTEGER," +
             KEY_TAKEN + " INTEGER)";
 
     @Override
@@ -116,6 +116,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return pillList;
     }
 
+    public Pill getPill(Long pillId) {
+        // Select All Query
+        Pill pill = null;
+        String selectQuery = "SELECT * FROM " + TABLE_PILLS + " WHERE " + KEY_SERVER_ID + " = " + pillId;
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                pill = new Pill(
+                        Long.valueOf(cursor.getString(0)),
+                        Long.valueOf(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        Long.valueOf(cursor.getString(4))
+                );
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+
+        return pill;
+    }
+
     public void deleteAllPills() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PILLS, null, null);
@@ -140,7 +166,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 intakeList.add(new Intake(
                         Long.valueOf(cursor.getString(0)),
                         Long.valueOf(cursor.getString(1)),
-                        cursor.getString(2)
+                        Long.valueOf(cursor.getString(2)),
+                        cursor.getString(3)
                 ));
             } while (cursor.moveToNext());
         }
@@ -202,6 +229,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         Log.e("INTAK C", String.valueOf(intake.getPillId()));
         values.put(KEY_TIME_OF_INTAKE, intake.getTimeOfIntake());
+        values.put(KEY_SERVER_ID, intake.getServerId());
+        values.put(KEY_PILL_ID, intake.getPillId());
         values.put(KEY_PILL_ID, intake.getPillId());
 
         sqLiteDatabase.insert(TABLE_INTAKES, null, values);
@@ -212,7 +241,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_SERVER_ID, event.getServerId());
         values.put(KEY_INTAKE_ID, event.getIntakeId());
         values.put(KEY_PILL_ID, event.getPillId());
         values.put(KEY_TAKEN, event.getTaken());
@@ -221,6 +249,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.insert(TABLE_EVENT_INTAKE, KEY_PILL_ID, values);
         sqLiteDatabase.close();
+    }
+
+    public List<IntakeEvent> getIntakeEvent(Long pillId){
+        List<IntakeEvent> intakeEvents = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_EVENT_INTAKE +
+                " WHERE " + KEY_PILL_ID + "=" + pillId;
+//        Log.e("Server ID", "serverID " + pill.getServerId());
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Log.e("F", cursor.getString(0));
+                Log.e("F", cursor.getString(1));
+                Log.e("F", cursor.getString(2));
+                intakeEvents.add(new IntakeEvent(
+                        Long.valueOf(cursor.getString(0)),
+                        Long.valueOf(cursor.getString(1)),
+                        Long.valueOf(cursor.getString(2)),
+                        Boolean.valueOf(cursor.getString(3))
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+
+        return intakeEvents;
     }
 
     public void deletePill(Pill pill) {

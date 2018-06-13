@@ -21,6 +21,7 @@ public class AppConstants {
     public static final String KEY_PILLS = "pills";
     public static final String KEY_TIME_OF_INTAKE = "timeOfIntake";
     public static final String KEY_INTAKES = "intakes";
+    public static final String KEY_EVENT_INTAKES = "event_intakes";
 
 
     /**
@@ -30,8 +31,12 @@ public class AppConstants {
     public static final String ENDPOINT_REGISTER = "register";
     public static final String ENDPOINT_PILL = "pill";
     public static final String ENDPOINT_PILL_DELETE = "pill-delete";
+    public static final String ENDPOINT_INTAKE_EVENT = "intake-event";
 
     public static final String KEY_SERVER_ID = "id";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_NUMBER_OF_INTAKES = "numberOfIntakes";
+    public static final String KEY_PILL_ID = "id_pill";
+    public static final String KEY_INTAKE_ID = "id_intake";
+    public static final String KEY_TAKEN = "taken";
 }

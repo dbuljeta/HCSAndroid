@@ -8,15 +8,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.example.daniel.hcs.R;
 
 public class NotificationSchelduer {
 
-    public static void showNotification(Context context, Class<?> cls, String title, String content)
+    private static final String BUNDLE_PILL_ID = "pill_id";
+    private static final String BUNDLE_INTAKE_ID = "intake_id";
+
+    public static void showNotification(Context context, Class<?> cls, String title, String content, Long pillId, Long intakeId)
     {
+        Bundle bundle = new Bundle();
         Intent notificationIntent = new Intent(context, cls);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        bundle.putLong(BUNDLE_PILL_ID, pillId);
+        bundle.putLong(BUNDLE_INTAKE_ID, intakeId);
+        notificationIntent.putExtras(bundle);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(cls);

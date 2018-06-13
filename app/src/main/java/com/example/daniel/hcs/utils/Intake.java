@@ -7,15 +7,19 @@ package com.example.daniel.hcs.utils;
 public class Intake {
 
     private Long id;
+    private Long serverId;
     private Long pillId;
     private String timeOfIntake;
 
-    public Intake(String timeOfIntake) {
+    public Intake(Long id, Long serverId, Long pillId, String timeOfIntake) {
+        this.id = id;
+        this.serverId = serverId;
+        this.pillId = pillId;
         this.timeOfIntake = timeOfIntake;
     }
 
-    public Intake(Long id, Long pillId, String timeOfIntake) {
-        this.id = id;
+    public Intake(Long serverId, Long pillId, String timeOfIntake) {
+        this.serverId = serverId;
         this.pillId = pillId;
         this.timeOfIntake = timeOfIntake;
     }
@@ -25,8 +29,20 @@ public class Intake {
         this.timeOfIntake = timeOfIntake;
     }
 
+    public Intake(String timeOfIntake) {
+        this.timeOfIntake = timeOfIntake;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public Long getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Long serverId) {
+        this.serverId = serverId;
     }
 
     public Long getPillId() {

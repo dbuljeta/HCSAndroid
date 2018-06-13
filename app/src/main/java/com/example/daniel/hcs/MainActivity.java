@@ -1,7 +1,9 @@
 package com.example.daniel.hcs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.daniel.hcs.interfaces.RequestListener;
 import com.example.daniel.hcs.utils.API;
+import com.example.daniel.hcs.utils.AppConstants;
 import com.example.daniel.hcs.utils.DatabaseHelper;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -34,9 +37,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         bLogin.setOnClickListener(this);
         bRegister.setOnClickListener(this);
 
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String jwt = sharedPreferences.getString(AppConstants.KEY_JWT,"x");
+        if (!jwt.equals("x")) {
+            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+            startActivity(intent);
+            MainActivity.this.finish();
+        } else {
+            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(MainActivity.this);
+            databaseHelper.deleteAllPills();
+        }
+
         apiService = API.getInstance(this);
-        databaseHelper = DatabaseHelper.getInstance(this);
-        databaseHelper.deleteAllPills();
+//        databaseHelper = DatabaseHelper.getInstance(this);
+//        databaseHelper.deleteAllPills();
     }
 
     @Override

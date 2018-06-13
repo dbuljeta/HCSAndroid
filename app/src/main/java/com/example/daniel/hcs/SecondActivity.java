@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -29,7 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SecondActivity extends Activity implements View.OnClickListener, AdapterView.OnItemLongClickListener {
+public class SecondActivity extends Activity implements View.OnClickListener, AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
 
     private DatabaseHelper databaseHelper;
     private ListView listView;
@@ -37,6 +38,9 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
     private List<Pill> pillList;
     private CustomAdapter pillAdapter;
     private API api;
+
+    public static final String BUNDLE_PILL_ID = "pill_id";
+    public static final String BUNDLE_INTAKE_ID = "intake_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +56,15 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         this.listView.setAdapter(pillAdapter);
         api = API.getInstance(this);
 
+
+
         //List<Pill> pills = databaseHelper.getAllPills();
         //Log.e("Mein pills", String.valueOf(pills));
         //textView.setText(String.valueOf(pills.get(0).getId()) + String.valueOf(pills.get(0).getName()));
         bAddPill = findViewById(R.id.bAddPill);
         bAddPill.setOnClickListener(this);
         listView.setOnItemLongClickListener(this);
+        listView.setOnItemClickListener(this);
         checkTime();
     }
 
@@ -148,20 +155,20 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         {
             Log.e("time", "i " + String.valueOf(i));
             intakes = databaseHelper.getIntakesFromPill(pills.get(i));
-//            Log.e("PIll ID", "pill ID " + pills.get(i).getServerId());
-//            Log.e("time", "INTAKE SIZE " + String.valueOf(intakes.size()));
+
             for (j = 0; j < intakes.size(); j++) {
                 time = intakes.get(j).getTimeOfIntake();
                 intakeTime = time.split(":");
-//                Log.e("timeHH", intakeTime[0]);
-//                Log.e("timeMM", intakeTime[1]);
-//                if (currentTime[0].equals(intakeTime[0]) && currentTime[1].equals(intakeTime[1]))
-//                {
-//                    Log.e("time", "Uzmi tableticu u: Vrijeme " + j + " " + time);
-//
-//                }
+
+                Bundle bundle = new Bundle();
                 AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
                 Intent receiverIntent = new Intent(this, WakeupReceiver.class);
+
+                Log.e("pillID", "pill id before sending " + pills.get(i).getServerId());
+                Log.e("pillID", "Intake id before sending " + intakes.get(j).getServerId());
+                bundle.putLong(BUNDLE_PILL_ID, pills.get(i).getServerId());
+                bundle.putLong(BUNDLE_INTAKE_ID, intakes.get(j).getServerId());
+                receiverIntent.putExtras(bundle);
                 //The second parameter is unique to this PendingIntent,
                 //if you want to make more alarms,
                 //make sure to change the 0 to another integer
@@ -174,7 +181,6 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
                 alarmCalendarTime.set(Calendar.HOUR_OF_DAY, hour);
                 alarmCalendarTime.set(Calendar.MINUTE, minute);
                 alarmCalendarTime.set(Calendar.SECOND, 0); //Must be set to 0 to start the alarm right when the minute hits 30
-                alarmCalendarTime.set(Calendar.MILLISECOND, 0); //Must be set to 0 to start the alarm right when the minute hits 30
 
                 //Add a day if alarm is set for before current time, so the alarm is triggered the next day
                 if (alarmCalendarTime.before(Calendar.getInstance())) {
@@ -187,5 +193,16 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         }
 
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Pill pill = pillList.get(i);
+        Bundle bundle = new Bundle();
+        bundle.putLong("serverID", pill.getServerId());
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+        intent.setClass(getApplicationContext(), ListItemActivity.class);
+        this.startActivity(intent);
     }
 }

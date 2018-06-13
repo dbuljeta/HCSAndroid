@@ -52,10 +52,9 @@ public class AddPill extends Activity implements View.OnClickListener {
         description = String.valueOf(etDescription.getText());
 //        serverId = Long.parseLong(String.valueOf(etTimeOfConsumption.getText()));
         number = Long.parseLong(String.valueOf(etNumberOfConsuption.getText()));
-        if (!name.isEmpty() || !description.isEmpty() || number != 0) {
+        if ((!name.isEmpty() || !description.isEmpty() || number != 0) && (number > 0 && number < 8)) {
             //TODO make server request
             pill = new Pill(name, description, number);
-            Log.e("Pill", String.valueOf(pill.getServerId()));
             Log.e("Pill", String.valueOf(pill.getName()));
             Log.e("Pill", String.valueOf(pill.getDescription()));
             Log.e("Pill", String.valueOf(pill.getNumberOfIntakes()));
@@ -98,7 +97,7 @@ public class AddPill extends Activity implements View.OnClickListener {
                             apiService.createPill(pill, intakeList, new RequestListener() {
                                 @Override
                                 public void failed(String message) {
-                                    Log.e("ADD", "FAIL");
+                                    Log.e("ADD", "FAIL " + message);
                                 }
 
                                 @Override

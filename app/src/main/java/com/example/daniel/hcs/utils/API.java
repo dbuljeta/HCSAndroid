@@ -46,7 +46,7 @@ public class API {
             jsonObject.put(AppConstants.KEY_NAME, name);
             jsonObject.put(AppConstants.KEY_PASSWORD, password);
         } catch (JSONException e) {
-            Log.e("ERROR Login1", e.getMessage());
+            Log.e("ERROR Login2", e.getMessage());
             e.printStackTrace();
             requestListener.failed(e.getMessage());
         }
@@ -85,9 +85,22 @@ public class API {
                                     for (int j = 0; j < intakesLength; ++j) {
                                         JSONObject intakeObject = (JSONObject) intakes.get(j);
                                         databaseHelper.addIntake(new Intake(
-                                                pillObject.getLong(AppConstants.KEY_SERVER_ID),
+                                                intakeObject.getLong(AppConstants.KEY_SERVER_ID),
+                                                intakeObject.getLong(AppConstants.KEY_PILL_ID),
                                                 intakeObject.getString(AppConstants.KEY_TIME_OF_INTAKE)
                                         ));
+                                        JSONArray intakeEvents = intakeObject.getJSONArray(AppConstants.KEY_EVENT_INTAKES);
+                                        Integer intakeEventLength = intakeEvents.length();
+                                        if (intakeEventLength != 0){
+                                            for (int k = 0; k < intakeEventLength; k++) {
+                                                JSONObject intakeEventObject = (JSONObject) intakeEvents.get(k);
+                                                databaseHelper.addIntakeEvent(new IntakeEvent(
+                                                        intakeEventObject.getLong(AppConstants.KEY_PILL_ID),
+                                                        intakeEventObject.getLong(AppConstants.KEY_INTAKE_ID),
+                                                        intakeEventObject.getBoolean(AppConstants.KEY_TAKEN)
+                                                ));
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -179,6 +192,8 @@ public class API {
                 Log.e("REG RESPONSE", String.valueOf(response));
                 try {
                     Integer status = response.getInt(AppConstants.KEY_STATUS);
+
+
                     if (status == 0) {
                         requestListener.failed("Email is taken");
                     } else {
@@ -186,15 +201,28 @@ public class API {
                         pill.setServerId(pillServerId);
 
                         databaseHelper.addPill(pill);
-                        for (Intake intake: intakesList) {
+                        JSONObject pills = response.getJSONObject("pills");
+
+                        JSONArray intakes = pills.getJSONArray(AppConstants.KEY_INTAKES);
+                        for (int j = 0; j < intakes.length(); j++) {
+                            JSONObject intake = (JSONObject) intakes.get(j);
+                            Intake in = new Intake(
+                                    intake.getLong(AppConstants.KEY_SERVER_ID),
+                                    intake.getLong(AppConstants.KEY_PILL_ID),
+                                    intake.getString(AppConstants.KEY_TIME_OF_INTAKE)
+                            );
+                            databaseHelper.addIntake(in);
+                        }
+                    }
+                        /*for (Intake intake: intakesList) {
                             intake.setPillId(pillServerId);
                             Log.e("PILLSERVERID", String.valueOf(intake.getPillId()));
                             Log.e("HOUT", String.valueOf(intake.getTimeOfIntake()));
-                            databaseHelper.addIntake(intake);
-                        }
-                        requestListener.finished("success");
 
-                    }
+                            databaseHelper.addIntake(intake);
+                        }*/
+                    requestListener.finished("success");
+
                 } catch (Exception e) {
                     Log.e("REG exp", String.valueOf(e.getMessage()));
 
@@ -234,9 +262,55 @@ public class API {
                 try {
                     Integer status = response.getInt(AppConstants.KEY_STATUS);
                     if (status == 0) {
-                        requestListener.failed("Email is taken");
                     } else {
                         databaseHelper.deletePill(pill);
+                        requestListener.finished("success");
+
+                    }
+                } catch (Exception e) {
+                    Log.e("REG exp", String.valueOf(e.getMessage()));
+
+                    requestListener.failed(e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("REG RESPONSE", String.valueOf(error));
+
+                requestListener.failed("Server error please try again");
+            }
+        }, activity);
+
+        volleyRequestQueue.addToRequestQueue(jsonObjectRequest);
+    }
+
+    public void createEventIntake(final IntakeEvent intakeEvent, final RequestListener requestListener) {
+        volleyRequestQueue = VolleyRequestQueue.getInstance(activity);
+        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity);
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(AppConstants.KEY_PILL_ID, intakeEvent.getPillId());
+            jsonObject.put(AppConstants.KEY_INTAKE_ID, intakeEvent.getIntakeId());
+            jsonObject.put(AppConstants.KEY_TAKEN, intakeEvent.getTaken());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("JSON REQEST", String.valueOf(jsonObject));
+        CustomJSONAuthObject jsonObjectRequest = new CustomJSONAuthObject(Request.Method.POST,
+                AppConstants.API_BASE_URL + AppConstants.ENDPOINT_INTAKE_EVENT, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("CREATEPILL", "ENTER");
+                Log.e("REG RESPONSE", String.valueOf(response));
+                try {
+                    Integer status = response.getInt(AppConstants.KEY_STATUS);
+                    if (status == 0) {
+                        requestListener.failed("Event intake is not created!");
+                    } else {
+                        databaseHelper.addIntakeEvent(intakeEvent);
                         requestListener.finished("success");
 
                     }

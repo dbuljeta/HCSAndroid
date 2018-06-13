@@ -48,9 +48,8 @@ public class CustomAdapter extends BaseAdapter{
         Pill pill = this.Pills.get(position);
         pillViewHolder.tvPill.setText(pill.getName());
         pillViewHolder.tvNumberOfIntakes.setText(String.valueOf(pill.getNumberOfIntakes()));
-//        pillViewHolder.tvNumberOfIntakes.setText(pill.getName());
-//        pillViewHolder.tvTimeIntake.setText(pill.tim());
-//        pillViewHolder.tvNumberOfIntakes.setText(String.valueOf(pill.getNumberOfIntakes()));
+        pillViewHolder.tvDescription.setText(String.valueOf(pill.getDescription()));
+
         return convertView;
     }
 
@@ -61,11 +60,11 @@ public class CustomAdapter extends BaseAdapter{
     }
 
     public static class ViewHolder {
-        public TextView tvPill, tvTimeIntake, tvNumberOfIntakes;
+        public TextView tvPill, tvDescription, tvNumberOfIntakes;
 
         public ViewHolder(View bookView) {
             tvPill = bookView.findViewById(R.id.tvPill);
-            tvTimeIntake = bookView.findViewById(R.id.tvTimeIntake);
+            tvDescription = bookView.findViewById(R.id.tvDescription);
             tvNumberOfIntakes = bookView.findViewById(R.id.tvNumberOfIntakes);
         }
     }
