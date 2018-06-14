@@ -14,17 +14,22 @@ import com.example.daniel.hcs.R;
 public class WakeupReceiver extends BroadcastReceiver {
 
     Long pillId, intakeId;
+    String pillName, pillDescription;
     public static final String BUNDLE_PILL_ID = "pill_id";
     public static final String BUNDLE_INTAKE_ID = "intake_id";
+    public static final String BUNDLE_PILL_NAME = "pill_name";
+    public static final String BUNDLE_PILL_DESCRIPTION = "pill_description";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e("ALAAAARM", "Popij tableticu da ti bude bolje!");
         pillId = intent.getLongExtra(BUNDLE_PILL_ID, 1);
         intakeId = intent.getLongExtra(BUNDLE_INTAKE_ID, 1);
+        pillName = intent.getStringExtra(BUNDLE_PILL_NAME);
+        pillDescription = intent.getStringExtra(BUNDLE_PILL_DESCRIPTION);
         Log.e("pillID", "pillID " + pillId);
         Log.e("pillID", "intakeID " + intakeId);
         NotificationSchelduer.showNotification(context, NotificationActivity.class,
-                "Take pill!", "Please!", pillId, intakeId);
+                "Take pill!", "Please!", pillId, intakeId, pillName, pillDescription);
     }
 }

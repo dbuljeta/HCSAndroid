@@ -41,6 +41,8 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
 
     public static final String BUNDLE_PILL_ID = "pill_id";
     public static final String BUNDLE_INTAKE_ID = "intake_id";
+    public static final String BUNDLE_PILL_NAME = "pill_name";
+    public static final String BUNDLE_PILL_DESCRIPTION = "pill_description";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,22 +118,6 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
         return false;
     }
 
-//    private void managerTasks(Location mlocation) {
-//        float distance;
-//        for (int i = 0; i < locations.size(); i++) {
-//            Location locationTaskMarker = new Location("");
-//            locationTaskMarker.setLatitude(locations.get(i).latitude);
-//            locationTaskMarker.setLongitude(locations.get(i).longitude);
-//            distance = locationTaskMarker.distanceTo(mlocation);
-//            Log.e("distance", Float.toString(distance));
-//            if (distance < 50) {
-//                if (!fCalled) {
-////                    fCalled = true;
-////                    taskBuilder(i);
-//                }
-//            }
-//        }
-//    }
 
     private void checkTime(){
         int i, j, alarmNumber = 0;
@@ -168,6 +154,9 @@ public class SecondActivity extends Activity implements View.OnClickListener, Ad
                 Log.e("pillID", "Intake id before sending " + intakes.get(j).getServerId());
                 bundle.putLong(BUNDLE_PILL_ID, pills.get(i).getServerId());
                 bundle.putLong(BUNDLE_INTAKE_ID, intakes.get(j).getServerId());
+
+                bundle.putString(BUNDLE_PILL_NAME, pills.get(i).getName());
+                bundle.putString(BUNDLE_PILL_DESCRIPTION, pills.get(i).getDescription());
                 receiverIntent.putExtras(bundle);
                 //The second parameter is unique to this PendingIntent,
                 //if you want to make more alarms,

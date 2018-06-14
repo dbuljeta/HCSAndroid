@@ -270,7 +270,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Long.valueOf(cursor.getString(0)),
                         Long.valueOf(cursor.getString(1)),
                         Long.valueOf(cursor.getString(2)),
-                        Boolean.valueOf(cursor.getString(3))
+                        //Boolean.valueOf(cursor.getString(3))
+                        cursor.getInt(3) > 0
                 ));
             } while (cursor.moveToNext());
         }

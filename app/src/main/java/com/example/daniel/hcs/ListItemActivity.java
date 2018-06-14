@@ -2,7 +2,6 @@ package com.example.daniel.hcs;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -11,7 +10,7 @@ import com.example.daniel.hcs.utils.Intake;
 import com.example.daniel.hcs.utils.IntakeEvent;
 import com.example.daniel.hcs.utils.Pill;
 
-import java.lang.annotation.IncompleteAnnotationException;
+
 import java.util.List;
 
 public class ListItemActivity extends Activity {
@@ -58,13 +57,14 @@ public class ListItemActivity extends Activity {
     }
 
     private void setColor(int i) {
-        if (intakeEvents.size() > 0) {
-            for (IntakeEvent intakeEvent : intakeEvents) {
-                if (intakeEvent.getIntakeId().equals(intakeList.get(i).getServerId())) {
-                    if (intakeEvent.getTaken()) {
-                        time[i].setTextColor(getResources().getColor(R.color.greenTEXT));
-                        break;
-                    }
+        for (IntakeEvent intakeEvent : intakeEvents) {
+            if (intakeEvent.getIntakeId().equals(intakeList.get(i).getServerId())) {
+                Log.e("ID", "intakeEvent ID " + intakeEvent.getIntakeId());
+                Log.e("ID", "intake ID " + intakeList.get(i).getServerId());
+                Log.e("ID", "taken " + intakeEvent.getTaken());
+                if (intakeEvent.getTaken()) {
+                    time[i].setTextColor(getResources().getColor(R.color.greenTEXT));
+                    break;
                 }
             }
         }

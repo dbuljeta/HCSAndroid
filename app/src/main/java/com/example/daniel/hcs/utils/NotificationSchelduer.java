@@ -16,14 +16,18 @@ public class NotificationSchelduer {
 
     private static final String BUNDLE_PILL_ID = "pill_id";
     private static final String BUNDLE_INTAKE_ID = "intake_id";
+    public static final String BUNDLE_PILL_NAME = "pill_name";
+    public static final String BUNDLE_PILL_DESCRIPTION = "pill_description";
 
-    public static void showNotification(Context context, Class<?> cls, String title, String content, Long pillId, Long intakeId)
+    public static void showNotification(Context context, Class<?> cls, String title, String content, Long pillId, Long intakeId, String pillName, String pillDescription)
     {
         Bundle bundle = new Bundle();
         Intent notificationIntent = new Intent(context, cls);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         bundle.putLong(BUNDLE_PILL_ID, pillId);
         bundle.putLong(BUNDLE_INTAKE_ID, intakeId);
+        bundle.putString(BUNDLE_PILL_NAME, pillName);
+        bundle.putString(BUNDLE_PILL_DESCRIPTION, pillDescription);
         notificationIntent.putExtras(bundle);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
